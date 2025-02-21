@@ -6,8 +6,6 @@ int main()
     return 0;
 }
 
-// rpc icmp
-
 int input_address()
 {
     char address[16];

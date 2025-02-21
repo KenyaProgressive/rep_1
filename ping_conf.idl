@@ -1,0 +1,9 @@
+[
+    uuid(95ca143c-3a3d-4c26-a802-2a4c0beec6a5),
+    version(1.0)
+]
+
+interface Ping {
+    void send_ping([in, string] char *address,
+    [out] boolean* result);
+}
