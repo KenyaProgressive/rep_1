@@ -6,6 +6,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include "ping_conf.h"
 
 int input_address();
 int validate_address(char *str);

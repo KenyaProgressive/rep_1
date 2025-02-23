@@ -152,7 +152,7 @@ extern const MIDL_STUB_DESC Ping_StubDesc;
 
 
 #if !defined(__RPC_WIN32__)
-#error  Invalid build platform for this stub.
+//#error  Invalid build platform for this stub.
 #endif
 
 #if !(TARGET_IS_NT50_OR_LATER)
