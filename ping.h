@@ -7,15 +7,15 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <winsock2.h>
-#include <unistd.h>
 #include <ipexport.h>
 #include <icmpapi.h>
 #include <stdint.h>
+#include "logger.h"
 
 int input_address();
 int validate_address(char *str);
 HANDLE prepare_request();
-int do_request(char *address, HANDLE fl);
-void format_error_message(const char *msg);
+int do_request(char *address, HANDLE fl, const char *filename);
+void message_error_print(const char *msg, LPSTR err_msg, DWORD err_id);
 
 #endif
