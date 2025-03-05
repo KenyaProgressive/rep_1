@@ -30,7 +30,7 @@ void log_do(LogLevel level, const char *message, ...)
     if (log_file == NULL)
         return;
 
-    const char *level_str[] = {"INFO", "ERROR"};
+    const char *level_str[] = {"INFO", "ERROR", "WARNING"};
     time_t now = time(NULL);
     struct tm *local_time = localtime(&now);
 

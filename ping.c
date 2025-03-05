@@ -145,6 +145,12 @@ HANDLE prepare_request()
 
 int do_request(char *address, HANDLE fl, const char *filename)
 {
+    int packet_sent = 0;
+    int packets_received = 0;
+    DWORD min_time = 0;
+    DWORD max_time = 0;
+    DWORD total_time = 0;
+
     char test_message[] = "Testing PING";
 
     DWORD size_of_reply = sizeof(ICMP_ECHO_REPLY) + (sizeof(test_message) + 1);
@@ -175,11 +181,11 @@ int do_request(char *address, HANDLE fl, const char *filename)
     }
     printf("Sending ping to %s...\n", address);
     fflush(stdout);
-    int packet_sent = 0;
     do
     {
         DWORD reply_value = IcmpSendEcho(fl, destination_address, test_message, sizeof(test_message), NULL, message_buff,
                                          size_of_reply, 1000);
+        packet_sent += 1;
         switch (reply_value)
         {
         case 0:
@@ -195,20 +201,39 @@ int do_request(char *address, HANDLE fl, const char *filename)
             switch (reply->Status)
             {
             case IP_SUCCESS:
+                packets_received += 1;
                 break;
             default:
                 printf("ICMP-ERR with status: %ld\n", reply->Status);
                 log_do(ERR, "ICMP-ERR: %s", filename);
                 break;
             }
+            DWORD current_time = reply->RoundTripTime;
+            total_time += current_time;
+            switch (current_time > max_time)
+            {
+                case 1:
+                    max_time = current_time;
+                    break;
+                case 0:
+                    break;
+            }
+            switch (current_time < min_time || min_time == 0)
+            {
+                case 1:
+                    min_time = current_time;
+                    break;
+                case 0:
+                    break;
+            }
             printf("Reply from %s: bytes=%d time=%ldms TTL=%d\n", inet_ntoa(*(struct in_addr *)&reply->Address), reply->DataSize, reply->RoundTripTime, reply->Options.Ttl);
-            packet_sent += 1;
             break;
         }
         }
         Sleep(1000);
     } while (packet_sent < 4);
     log_do(INFO, "Success sending ping: %s", filename);
+    print_statistics(packet_sent, packets_received, min_time, max_time, total_time, filename);
     logger_close(filename);
     free(message_buff);
     return 0;
@@ -226,4 +251,21 @@ void message_error_print(const char *msg, LPSTR err_msg, DWORD err_id)
         NULL);
     printf("%s: %s", msg, err_msg);
     LocalFree(err_msg);
+}
+
+void print_statistics(int ps, int pr, DWORD mt, DWORD mxt, DWORD ttm, const char *filename)
+{
+    printf(" -- Statistics -- \n");
+    printf("Packets: Sent=%d, Received=%d, Lost=%d(%.0f%% loss)\n", ps, pr, ps - pr, ((ps - pr) * 100.0) / ps);
+
+    switch (ps)
+    {
+        case 0:
+        log_do(WARNING, "Packets dont't sending: %s", filename);
+            break;
+        default:
+            printf("Round-Trip Time: Min = %lums, Max = %lums, Avg = %.0fms\n", mt, mxt, (float)ttm / pr);
+            log_do(INFO, "Statistics was print: %s", filename);
+            break;
+    }
 }

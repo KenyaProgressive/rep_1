@@ -17,5 +17,6 @@ int validate_address(char *str);
 HANDLE prepare_request();
 int do_request(char *address, HANDLE fl, const char *filename);
 void message_error_print(const char *msg, LPSTR err_msg, DWORD err_id);
+void print_statistics(int ps, int pr, DWORD mt, DWORD mxt, DWORD ttm, const char *filename);
 
 #endif
