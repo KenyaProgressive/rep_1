@@ -5,7 +5,7 @@
   1. Использование switch-case вместо if-else
   2. Использование только do..while из циклов
 
-#### Компиляция проекта: gcc ping.c logger.c -o <your filename> -liphlpapi -lws2_32 -Wall -Werror -Wextra
-#### Запуск: ./<your filename>
+#### Компиляция проекта: gcc ping.c logger.c -o *your filename* -liphlpapi -lws2_32 -Wall -Werror -Wextra
+#### Запуск: *<your filename*
 
 **На вход принимает только IPv4-адрес**. Обработки доменных имён, в данной версии, нет.
